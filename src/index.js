@@ -1,4 +1,12 @@
-export const INTEREST_CATEGORIES = [
+import _ from 'lodash';
+import $ from 'jquery';
+
+// import {INTEREST_CATEGORIES} from './fb_interest_categories.js';
+
+//Note: I understand that best practice would be to place this data structure 
+//in another separate JS file and export it. I ran into a CORS error with that 
+//and didn't want to risk errors when deploying for grading.
+const interest_categories = [
     {
       "topic": "Kamala Harris",
       "life_relevancy": true,
@@ -1175,3 +1183,72 @@ export const INTEREST_CATEGORIES = [
       "identity_relevancy": false
     }
    ];
+
+//REQUIREMENTS: 
+//Library 1 - Lodash: used filter and randomize functions in order to filter, find, and itertate
+//over an array of elements.
+//Library 2 - jQuery: also used in the filter and randomize functions in a couple of places (some vanilla JS still exists)
+//because the synax is simpler.
+//Library 3 - Bootstrap: used for the header of the page and the buttons. 
+
+const life_relevancy_btn = document.querySelector("#life_relevancy_btn");
+const identity_relevancy_btn = document.querySelector("#identity_relevancy_btn");
+const irrelevancy_btn = document.querySelector("#irrelevancy_btn");
+const randomize_btn = document.querySelector("#randomize_btn");
+
+window.addEventListener('load', populateInterests(interest_categories)); 
+life_relevancy_btn.addEventListener('click', function () {filterByRelevancy('life_relevancy')});
+identity_relevancy_btn.addEventListener('click', function () {filterByRelevancy('identity_relevancy')});
+irrelevancy_btn.addEventListener('click', filterByIrrelevancy);
+randomize_btn.addEventListener('click', randomize);
+
+function populateInterests (interests) {
+    const interestList =  document.querySelector("#interest-container");
+    interests.forEach(function (interest) {
+            const div =  document.createElement("div");
+            const p =  document.createElement("p");
+            const randomColor = '#'+Math.floor(Math.random()*16777215).toString(16);
+            div.classList.add("square");
+            div.style.backgroundColor = randomColor;
+            div.style.opacity = 0.95;
+            p.innerHTML = interest.topic;
+            interestList.append(div);
+            div.append(p);
+        } 
+    )
+}
+
+function filterByRelevancy (relevancy_type) {
+    const interestList =  document.querySelector("#interest-container").childNodes;
+    relevancy_subset  = _.filter(interest_categories, [relevancy_type, true]);
+    
+    _.forEach(interestList, function (interest) {
+        $(interest).css('background-color', 'grey');
+    })
+
+    _.forEach(relevancy_subset, function (relevant_interest) {
+        relevancy_square = $('p:contains(' + relevant_interest.topic + ')').parent();
+        $(relevancy_square).css('background-color', 'green');
+    })
+}
+
+function filterByIrrelevancy () {
+    const interestList =  document.querySelector("#interest-container").childNodes;
+    irrelevancy_subset  = _.filter(interest_categories, { 'life_relevancy': false, 'identity_relevancy': false });    
+
+    _.forEach(interestList, function (interest) {
+        $(interest).css('background-color', 'grey');
+    })
+
+    _.forEach(irrelevancy_subset, function (irrelevant_interest) {
+        irrelevancy_square = $('p:contains(' + irrelevant_interest.topic + ')').parent();
+        $(irrelevancy_square).css('background-color', 'red');
+    })
+}
+
+function randomize () {
+    const interestList =  document.querySelector("#interest-container");
+    interestList.querySelectorAll('*').forEach(n => n.remove());    
+    shuffled_set = _.shuffle(interest_categories);
+    populateInterests(shuffled_set);
+}
