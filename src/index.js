@@ -1220,28 +1220,28 @@ function populateInterests (interests) {
 
 function filterByRelevancy (relevancy_type) {
     const interestList =  document.querySelector("#interest-container").childNodes;
-    relevancy_subset  = _.filter(interest_categories, [relevancy_type, true]);
+    let relevancy_subset  = _.filter(interest_categories, [relevancy_type, true]);
     
     _.forEach(interestList, function (interest) {
         $(interest).css('background-color', 'grey');
     })
 
     _.forEach(relevancy_subset, function (relevant_interest) {
-        relevancy_square = $('p:contains(' + relevant_interest.topic + ')').parent();
+        let relevancy_square = $('p:contains(' + relevant_interest.topic + ')').parent();
         $(relevancy_square).css('background-color', 'green');
     })
 }
 
 function filterByIrrelevancy () {
     const interestList =  document.querySelector("#interest-container").childNodes;
-    irrelevancy_subset  = _.filter(interest_categories, { 'life_relevancy': false, 'identity_relevancy': false });    
+    let irrelevancy_subset  = _.filter(interest_categories, { 'life_relevancy': false, 'identity_relevancy': false });    
 
     _.forEach(interestList, function (interest) {
         $(interest).css('background-color', 'grey');
     })
 
     _.forEach(irrelevancy_subset, function (irrelevant_interest) {
-        irrelevancy_square = $('p:contains(' + irrelevant_interest.topic + ')').parent();
+        let irrelevancy_square = $('p:contains(' + irrelevant_interest.topic + ')').parent();
         $(irrelevancy_square).css('background-color', 'red');
     })
 }
@@ -1249,6 +1249,6 @@ function filterByIrrelevancy () {
 function randomize () {
     const interestList =  document.querySelector("#interest-container");
     interestList.querySelectorAll('*').forEach(n => n.remove());    
-    shuffled_set = _.shuffle(interest_categories);
+    let shuffled_set = _.shuffle(interest_categories);
     populateInterests(shuffled_set);
 }
